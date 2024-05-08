@@ -17,12 +17,13 @@ def parse_args():
   return parser.parse_args()
 
 
-def plot_specgram(sound, sampling_rate, fp):
+def plot_specgram(sound, sampling_rate, fp, scale=1):
   plt.figure()
-  plt.specgram(sound, Fs=sampling_rate, cmap=plt.get_cmap('jet'))
+  plt.specgram(sound[::scale], Fs=sampling_rate/scale, cmap=plt.get_cmap('jet'))
   plt.xlabel('Time (sec)')
   plt.ylabel('Frequency (Hz)')
   plt.colorbar().set_label('PSD (dB)')
+  # plt.show()
   plt.savefig(fp)
 
 
@@ -36,4 +37,9 @@ if __name__ == '__main__':
 
   sr, sound = wavfile.read(args.output)
 
-  plot_specgram(sound, sr, f"{args.output}.png")
+  scale = 1
+  if sr > 1000:
+      scale = 22
+  print(sr, scale)
+
+  plot_specgram(sound, sr, f"{args.output}.png", scale)
